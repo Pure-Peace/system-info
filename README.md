@@ -5,6 +5,7 @@ linux and windows system information api
 ### based on: python3.8
 
 所有api均支持linux和windows
+
 All apis support linux and windows
 
 # api列表：
