@@ -71,7 +71,7 @@ GetIoReadWrite()
 {'write': 1003332, 'read': 1466368}
 ```
 
-- 当前系统CPU常量
+## 当前系统CPU常量
 ```python
 GetCpuConstants()
 ```
@@ -380,6 +380,6 @@ GetFullSystemData()
 }
 ```
 
-
-Pure-Peace
+## Author
+### Pure-Peace
   
