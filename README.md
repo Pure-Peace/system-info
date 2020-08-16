@@ -11,6 +11,41 @@ All apis support linux and windows
 
 # api列表：
 
+```
+CpuConstants
+ExecShellUnix
+GetBootTime
+GetCpuConstants
+GetCpuInfo
+GetDiskInfo
+GetDiskInfoUnix
+GetDiskInfoWindows
+GetErrorInfo
+GetFullSystemData'
+GetIoRead
+GetIoReadWrite
+GetIoWrite
+GetLoadAverage
+GetMemInfo
+GetMemInfoUnix
+GetMemInfoWindows
+GetNetWork
+GetRegValue
+GetSystemInfo
+GetSystemVersion
+GetSystemVersionUnix
+GetSystemVersionWindows
+ToSizeInt
+ToSizeString
+UNIX
+cpuConstants
+md5
+readFile
+```
+
+
+# api说明：
+
 - 当前系统网络使用情况：上传下载速率，收发包
 ```
 GetNetWork()
