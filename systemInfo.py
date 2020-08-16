@@ -3,7 +3,7 @@
 @name: 系统信息 / SystemInfo
 @author: PurePeace
 @time: 2020年8月17日
-@version: 0.2
+@version: 0.1
 '''
 
 from typing import List, Dict, Any
@@ -56,7 +56,7 @@ class CpuConstants:
         None.
 
         '''
-        if UNIX: bool: self.GetCpuConstantsUnix(update)
+        if UNIX: self.GetCpuConstantsUnix(update)
         else: self.GetCpuConstantsWindows(update)
 
         self.initialed: bool = True
@@ -270,10 +270,10 @@ def GetLoadAverage() -> dict:
     try: c: list = os.getloadavg()
     except: c: list = [0,0,0]
     data: dict = {i: c[idx] for idx, i in enumerate(('one', 'five', 'fifteen'))}
-    data['max'] = psutil.cpu_count() * 2;
-    data['limit'] = data['max'];
-    data['safe'] = data['max'] * 0.75;
-    return data;
+    data['max'] = psutil.cpu_count() * 2
+    data['limit'] = data['max']
+    data['safe'] = data['max'] * 0.75
+    return data
 
 
 def GetMemInfo() -> dict:
@@ -313,9 +313,7 @@ def GetMemInfoUnix() -> Dict[str, int]:
         memInfo['memBuffers'] - \
         memInfo['memCached']
 
-    memInfo['memUsedPercent'] = '{:.2f}'.format(
-        memInfo['memRealUsed'] / mem.total * 100
-    )
+    memInfo['memUsedPercent'] = memInfo['memRealUsed'] / memInfo['memTotal'] * 100
 
     return memInfo
 
@@ -335,7 +333,7 @@ def GetMemInfoWindows() -> dict:
         'memTotal': ToSizeInt(mem.total, 'MB'),
         'memFree': ToSizeInt(mem.free, 'MB'),
         'memRealUsed': ToSizeInt(mem.used, 'MB'),
-        'menUsedPercent': '{:.2f}'.format(mem.used / mem.total * 100)
+        'menUsedPercent': mem.used / mem.total * 100
     }
 
     return memInfo
@@ -574,13 +572,13 @@ def ExecShellUnix(cmdstring: str, shell=True):
         e = err_f.read()
         if not err_f.closed: err_f.close()
         if not succ_f.closed: succ_f.close()
-    except:
-        print(GetErrorInfo())
+    except Exception as err:
+        print(err)
     try:
         if type(a) == bytes: a = a.decode('utf-8')
         if type(e) == bytes: e = e.decode('utf-8')
-    except:
-        pass
+    except Exception as err:
+        print(err)
 
     return a,e
 
