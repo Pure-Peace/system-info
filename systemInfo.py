@@ -3,7 +3,7 @@
 @name: 系统信息 / SystemInfo
 @author: PurePeace
 @time: 2020年8月17日
-@version: 0.1
+@version: 0.2
 '''
 
 from typing import List, Dict, Any
@@ -37,11 +37,12 @@ class CpuConstants:
         '''
         self.WMI = None
         self.initialed: bool = False
+        self.cpuList: list = [] # windows only
 
-        self.cpuList: list = []
-        self.cpuCount: int = 0
-        self.cpuThreads: int = 0
-        self.cpuName: str = ''
+        self.cpuCount: int = 0 # 物理cpu数量
+        self.cpuCore: int = 0 # cpu物理核心数
+        self.cpuThreads: int = 0 # cpu逻辑核心数
+        self.cpuName: str = '' # cpu型号
 
         self.Update(True)
 
@@ -73,7 +74,12 @@ class CpuConstants:
 
         '''
         if not self.initialed: self.Update()
-        return {'cpu_count': self.cpuCount, 'cpu_name': self.cpuName}
+        return {
+            'cpu_count': self.cpuCount,
+            'cpu_name': self.cpuName,
+            'cpu_core': self.cpuCore,
+            'cpu_threads': self.cpuThreads
+        }
 
 
     def GetCpuConstantsUnix(self, update: bool = False) -> None:
@@ -307,6 +313,10 @@ def GetMemInfoUnix() -> Dict[str, int]:
         memInfo['memBuffers'] - \
         memInfo['memCached']
 
+    memInfo['memUsedPercent'] = '{:.2f}'.format(
+        memInfo['memRealUsed'] / mem.total * 100
+    )
+
     return memInfo
 
 
@@ -324,7 +334,8 @@ def GetMemInfoWindows() -> dict:
     memInfo: dict = {
         'memTotal': ToSizeInt(mem.total, 'MB'),
         'memFree': ToSizeInt(mem.free, 'MB'),
-        'memRealUsed': ToSizeInt(mem.used, 'MB')
+        'memRealUsed': ToSizeInt(mem.used, 'MB'),
+        'menUsedPercent': '{:.2f}'.format(mem.used / mem.total * 100)
     }
 
     return memInfo
@@ -403,14 +414,18 @@ def GetDiskInfoWindows() -> list:
     '''
     diskIo: list = psutil.disk_partitions()
     diskInfo: list = []
-    tmp: dict = {}
     for disk in diskIo:
+        tmp: dict = {}
         try:
             tmp['path'] = disk.mountpoint.replace("\\","/")
-            usage: psutil._common.sdiskusage = psutil.disk_usage(disk.mountpoint)
-            tmp['size'] = [
-                ToSizeString(i) for i in (usage.total, usage.used, usage.free)
-            ] + ['{}%'.format(usage.percent)]
+            usage = psutil.disk_usage(disk.mountpoint)
+            tmp['size'] = {
+                'total': usage.total,
+                'used': usage.used,
+                'free': usage.free,
+                'percent': usage.percent
+            }
+            tmp['fstype'] = disk.fstype
             tmp['inodes'] = False
             diskInfo.append(tmp)
         except:
@@ -767,9 +782,9 @@ def GetSystemVersionWindows() -> str:
 
     '''
     try:
-        import public,platform
+        import platform
         bit: str = 'x86';
-        if public.is_64bitos(): bit = 'x64'
+        if 'PROGRAMFILES(X86)' in os.environ: bit = 'x64'
 
         def get(key: str):
             return GetRegValue(
@@ -778,11 +793,11 @@ def GetSystemVersionWindows() -> str:
                 key
             )
 
-        os = get('ProductName')
+        osName = get('ProductName')
         build = get('CurrentBuildNumber')
 
         version: str = '{} (build {}) {} (Py{})'.format(
-            os, build, bit, platform.python_version())
+            osName, build, bit, platform.python_version())
         return version
     except Exception as ex:
         print('获取系统版本失败，错误：' + str(ex))
@@ -816,7 +831,7 @@ def GetSystemVersionUnix() -> str:
         return '未知系统版本.'
 
 
-def GetBootTime(self) -> dict:
+def GetBootTime() -> dict:
     '''
     获取当前系统启动时间
 
@@ -829,6 +844,7 @@ def GetBootTime(self) -> dict:
     bootTime: float = psutil.boot_time()
     return {
         'timestamp': bootTime,
+        'runtime': time.time() - bootTime,
         'datetime': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
     }
 
@@ -864,14 +880,15 @@ def GetFullSystemData() -> dict:
     systemData: dict = {
         **GetSystemInfo(),
         'network': { **GetNetWork() },
-        'io': { **GetIoReadWrite() }
+        'io': { **GetIoReadWrite() },
+        'boot': { **GetBootTime() },
+        'time': time.time()
     }
     return systemData
 
+cpuConstants = CpuConstants()
 
 if __name__ == '__main__':
-    cpuConstants = CpuConstants()
-
     print(GetFullSystemData())
     print(GetCpuConstants())
     print(GetSystemInfo())
