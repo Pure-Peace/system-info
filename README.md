@@ -1,10 +1,11 @@
 # system-info
-### 最全！基于python3的linux和windows系统信息api
+基于python3的linux和windows系统信息api
 linux and windows system information api
 
-### based on: python3
+### based on: python3.8
 
-## 所有api均支持linux和windows
+所有api均支持linux和windows
+All apis support linux and windows
 
 # api列表：
 
