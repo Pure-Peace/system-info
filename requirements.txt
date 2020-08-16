@@ -1,0 +1,3 @@
+WMI==1.5.1
+cachelib==0.1.1
+psutil==5.7.2
