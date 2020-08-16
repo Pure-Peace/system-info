@@ -21,7 +21,7 @@ GetDiskInfo
 GetDiskInfoUnix
 GetDiskInfoWindows
 GetErrorInfo
-GetFullSystemData'
+GetFullSystemData
 GetIoRead
 GetIoReadWrite
 GetIoWrite
@@ -46,72 +46,137 @@ readFile
 
 # api说明：
 
-- 当前系统网络使用情况：上传下载速率，收发包
-```
+## 当前系统网络使用情况：上传下载速率，收发包
+```python
 GetNetWork()
 ```
-```
-{'up': 1.54,
- 'down': 0.37,
- 'upTotal': 87688289,
- 'downTotal': 336439316,
- 'downPackets': 397399,
- 'upPackets': 262468}
+#### both
+```python
+{
+	'up': 1.54,
+	'down': 0.37,
+	'upTotal': 87688289,
+	'downTotal': 336439316,
+	'downPackets': 397399,
+	'upPackets': 262468
+}
 ```
  
-- 当前系统磁盘IO情况：IO读写
-```
+## 当前系统磁盘IO情况：IO读写
+```python
 GetIoReadWrite()
 ```
-```
+#### both
+```python
 {'write': 1003332, 'read': 1466368}
 ```
 
 - 当前系统CPU常量
-```
+```python
 GetCpuConstants()
 ```
-```
+
+#### windows
+```python
 {'cpu_count': 1, 'cpu_name': 'AMD Ryzen 5 2500U with Radeon Vega Mobile Gfx  ', 'cpu_core': 4, 'cpu_threads': 8}
 ```
 
-- 当前系统CPU信息、使用率
+#### linux
+```python
+{'cpu_count': 1, 'cpu_name': 'Intel(R) Xeon(R) Platinum 8269CY CPU @ 2.50GHz', 'cpu_core': 1, 'cpu_threads': 1}
 ```
+
+## 当前系统CPU信息、使用率
+```python
 GetCpuInfo()
 ```
-```
-{'used': 17.2,
-'used_list': [23.8, 12.2, 19.6, 10.2, 20.3, 6.2, 12.6, 30.3],
-'cpu_count': 1,
-'cpu_name': 'AMD Ryzen 5 2500U with Radeon Vega Mobile Gfx  ',
-'cpu_core': 4,
-'cpu_threads': 8}
+
+#### windows
+```python
+{
+	'used': 17.2,
+	'used_list': [23.8, 12.2, 19.6, 10.2, 20.3, 6.2, 12.6, 30.3],
+	'cpu_count': 1,
+	'cpu_name': 'AMD Ryzen 5 2500U with Radeon Vega Mobile Gfx  ',
+	'cpu_core': 4,
+	'cpu_threads': 8
+}
 ```
 
-- 当前系统负载信息
+#### linux
+```python
+{
+	'used': 2.0,
+	'used_list': [3.4],
+	'cpu_count': 1,
+	'cpu_name': 'Intel(R) Xeon(R) Platinum 8269CY CPU @ 2.50GHz',
+	'cpu_core': 1,
+	'cpu_threads': 1
+}
 ```
+
+## 当前系统负载信息
+```python
 GetLoadAverage()
 ```
-```
-{'one': 0, 'five': 0, 'fifteen': 0, 'max': 16, 'limit': 16, 'safe': 12.0}
+
+#### windows
+```python
+{
+	'one': 0,
+	'five': 0,
+	'fifteen': 0,
+	'max': 16,
+	'limit': 16,
+	'safe': 12.0
+}
 ```
 
-- 当前系统内存使用情况
+#### linux
+```python
+{
+	'one': 0.46,
+	'five': 0.18,
+	'fifteen': 0.14,
+	'max': 2,
+	'limit': 2,
+	'safe': 1.5
+}
 ```
+
+## 当前系统内存使用情况（linux比windows多了cached和buffers）
+```python
 GetMemInfo()
 ```
-```
-{'memTotal': 7069,
- 'memFree': 1202,
- 'memRealUsed': 5866,
- 'menUsedPercent': '82.98'}
+#### windows
+```python
+{
+	'memTotal': 7069,
+	'memFree': 1202,
+	'memRealUsed': 5866,
+	'menUsedPercent': '82.98'
+}
 ```
 
-- 当前系统磁盘信息
+#### linux
+```python
+{
+	'memTotal': 1838,
+	'memFree': 181,
+	'memBuffers': 25,
+	'memCached': 448,
+	'memRealUsed': 1184,
+	'memUsedPercent': 64.41784548422198
+}
 ```
+
+## 当前系统磁盘信息
+```python
 GetDiskInfo()
 ```
-```
+
+#### windows
+```python
 [{'path': 'C:/',
   'size': {'total': 85899341824,
    'used': 84512485376,
@@ -128,12 +193,21 @@ GetDiskInfo()
   'inodes': False}]
 ```
 
-  
-- 获取系统注册表信息（仅windows可用）
+#### linux
+```python
+[{
+	'path': '/',
+	'size': ['50G', '16G', '32G', '33%'],
+	'inodes': ['3276800', '261498', '3015302', '8%']
+}]
 ```
+
+  
+## 获取系统注册表信息（仅windows可用）
+```python
 GetRegValue(key: str, subkey: str, value: str)
 ```
-```
+```python
     '''
   获取系统注册表信息
 
@@ -154,29 +228,40 @@ GetRegValue(key: str, subkey: str, value: str)
   '''
   ```
 
-- 获取系统版本信息
-```
+## 获取系统版本信息
+```python
 GetSystemVersion()
 ```
-```
+
+#### windows
+```python
 Windows 10 Home China (build 18362) x64 (Py3.8.5)
 ```
 
-- 获取系统启动时间及运行时间
+#### linux
+```python
+CentOS  7.6.1810(Py 3.8.5)
 ```
+
+## 获取系统启动时间及运行时间
+```python
 GetBootTime()
 ```
-```
+
+#### both
+```python
 {'timestamp': 1597574445.835271,
  'runtime': 33396.16829442978,
  'datetime': '2020-08-17 03:57:22'}
 ```
 
-- 获取全部系统信息
-```
+## 获取全部系统信息
+```python
 GetFullSystemData()
 ```
-```
+
+#### windows
+```python
 {
 	'cpu': {
 		'used': 16.0,
@@ -242,6 +327,59 @@ GetFullSystemData()
 }
 ```
 
+#### linux
+```python
+{
+	'cpu': {
+		'used': 6.0,
+		'used_list': [3.4],
+		'cpu_count': 1,
+		'cpu_name': 'Intel(R) Xeon(R) Platinum 8269CY CPU @ 2.50GHz',
+		'cpu_core': 1,
+		'cpu_threads': 1
+	},
+	'load': {
+		'one': 0.59,
+		'five': 0.49,
+		'fifteen': 0.28,
+		'max': 2,
+		'limit': 2,
+		'safe': 1.5
+	},
+	'mem': {
+		'memTotal': 1838,
+		'memFree': 180,
+		'memBuffers': 26,
+		'memCached': 448,
+		'memRealUsed': 1184,
+		'memUsedPercent': 64.41784548422198
+	},
+	'disk': [{
+		'path': '/',
+		'size': ['50G', '16G', '32G', '33%'],
+		'inodes': ['3276800', '261498', '3015302', '8%']
+	}],
+	'network': {
+		'up': 0.0,
+		'down': 0.0,
+		'upTotal': 606720149,
+		'downTotal': 479946863,
+		'downPackets': 1431369,
+		'upPackets': 1305962
+	},
+	'io': {
+		'write': 0,
+		'read': 0
+	},
+	'boot': {
+		'timestamp': 1597435339.0,
+		'runtime': 175312.03097391129,
+		'datetime': '2020-08-17 04:44:11'
+	},
+	'time': 1597610651.0309963
+}
+```
 
 
+Pure-Peace
   
